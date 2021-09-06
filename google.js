@@ -46,7 +46,7 @@ let lastImgHash = "";
           break;
         case "type":
           page.keyboard.type(arg)
-         setTimeout(ss,100)
+         setTimeout(ss,1000)
           break;
         case "key":
           if (arg === "enter") await page.keyboard.press(String.fromCharCode(13));
