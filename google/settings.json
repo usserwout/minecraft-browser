@@ -1,9 +1,0 @@
-{
-    "username":"Google",
-    "port": 54052,
-    "version":"1.8.9",
-    "default_view":"small",
-    "max_fps": 2,
-    "max_video_fps": 0.5,
-    "scale":0.25
-}
