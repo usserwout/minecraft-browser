@@ -1,3 +1,5 @@
+console.clear();
+console.log("LOADING");
 const puppeteer = require("puppeteer");
 const { fork } = require("child_process")
 const Jimp = require('jimp');
