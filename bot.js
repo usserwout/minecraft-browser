@@ -4,6 +4,7 @@ const settings = require("./settings.json")
 let currentFrame = []
 let metadata_frame = {}
 let img_id
+let online = false
 
 const bot = mineflayer.createBot({
     username: settings.username,
@@ -27,29 +28,33 @@ bot.on("chat", (username, message) => {
 
 })
 
+process.on("message", async ([eventName, data]) => {
+
+if(!online) await (()=> new Promise((resolve)=> bot.once("spawn", () => resolve)))()
+
+    if (eventName === "build") {
+        img_id = Math.random().toString()
+        const pos = bot.player.entity.position.floored()
+        const { blocks, height, width } = data
+        img_width = width
+        img_height = height
+        if (!currentFrame.length) createBorder(width, height, pos)
+        const commands = optimizer(blocks, height, width, pos)
+        console.log("Commands: ", commands.length)
+        for (const cmd of commands) {
+            //  console.log(cmd)
+            bot.chat(cmd)
+        }
+        currentFrame = blocks
+        metadata_frame = { height, width, pos }
+    }else if(eventName === "say") bot.chat(data)
+
+})
+
+
 bot.once("spawn", () => {
     bot.chat("/gamerule randomTickSpeed 0")
-    process.on("message", ([eventName, data]) => {
-
-        if (eventName === "build") {
-            img_id = Math.random().toString()
-            const pos = bot.player.entity.position.floored()
-            const { blocks, height, width } = data
-            img_width = width
-            img_height = height
-            if (!currentFrame.length) createBorder(width, height, pos)
-            const commands = optimizer(blocks, height, width, pos)
-            console.log("Commands: ", commands.length)
-            for (const cmd of commands) {
-                //  console.log(cmd)
-                bot.chat(cmd)
-            }
-            currentFrame = blocks
-            metadata_frame = { height, width, pos }
-        }else if(eventName === "text"){
-        }else if(eventName === "say") bot.chat(data)
-
-    })
+    online = true
 })
 
 bot.on("blockUpdate", (b) => {
@@ -98,3 +103,4 @@ function createBorder(width, height, pos) {
     bot.chat(`/fill ${pos.x  + width / 2} ${pos.y + 2} ${pos.z + 1} ${pos.x  + width / 2} ${pos.y + 3 + height} ${pos.z - 1} coal_block`)
 
 }
+
